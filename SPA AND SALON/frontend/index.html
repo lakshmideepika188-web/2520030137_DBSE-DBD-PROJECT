@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Verdant — Salon & Spa Client Self-Service</title>
+<style>
+  :root{
+    --ink:#20261f;
+    --cream:#f6f3ea;
+    --sage:#7c8f6e;
+    --sage-dark:#4d5c42;
+    --clay:#a9613f;
+    --gold:#c9a15a;
+    --line:rgba(32,38,31,0.14);
+    --white:#fffdf8;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--cream);
+    color:var(--ink);
+    font-family:'Iowan Old Style','Palatino Linotype',Georgia,serif;
+    line-height:1.5;
+  }
+  h1,h2,h3,.brand,.btn,nav a,.tag{
+    font-family:'Avenir Next','Futura',Helvetica,Arial,sans-serif;
+  }
+  a{color:inherit;}
+  img{max-width:100%;display:block;}
+
+  /* NAV */
+  header{
+    position:sticky; top:0; z-index:50;
+    background:rgba(246,243,234,0.92);
+    backdrop-filter:blur(6px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav-wrap{
+    max-width:1180px; margin:0 auto; padding:18px 32px;
+    display:flex; align-items:center; justify-content:space-between;
+  }
+  .brand{font-weight:700; font-size:20px; letter-spacing:0.02em; display:flex; align-items:center; gap:10px;}
+  .brand .leaf{width:22px;height:22px;}
+  nav ul{list-style:none; display:flex; gap:34px; margin:0; padding:0;}
+  nav a{font-size:14.5px; text-decoration:none; color:var(--sage-dark); font-weight:600;}
+  .btn{
+    font-weight:700; font-size:14px; padding:11px 22px; border-radius:3px;
+    border:1.5px solid var(--sage-dark); background:none; cursor:pointer;
+    color:var(--sage-dark); transition:background .25s ease, color .25s ease, transform .15s ease;
+  }
+  .btn:active{transform:translateY(1px);}
+  button{font-family:inherit;}
+  .btn.filled{background:var(--sage-dark); color:var(--white);}
+  .btn.filled:hover{background:var(--ink);}
+  .btn:not(.filled):hover{background:var(--sage-dark); color:var(--white);}
+
+  /* HERO */
+  .hero{
+    max-width:1180px; margin:0 auto; padding:80px 32px 60px;
+    display:grid; grid-template-columns:1.1fr 0.9fr; gap:60px; align-items:center;
+  }
+  .hero .tag{
+    color:var(--clay); font-weight:700; font-size:13.5px; letter-spacing:0.04em;
+  }
+  .hero h1{
+    font-size:56px; line-height:1.04; margin:18px 0 22px; font-weight:800; color:var(--ink);
+  }
+  .hero h1 em{font-style:italic; color:var(--sage-dark);}
+  .hero p{font-size:17.5px; max-width:46ch; color:#3c4238;}
+  .hero-actions{display:flex; gap:14px; margin-top:30px;}
+  .hero-visual{
+    position:relative; background:var(--sage-dark); border-radius:6px;
+    aspect-ratio:4/5; overflow:hidden;
+  }
+  .hero-visual .phone{
+    position:absolute; inset:34px; background:var(--white); border-radius:22px;
+    box-shadow:0 30px 60px rgba(0,0,0,0.35); padding:18px; display:flex; flex-direction:column;
+  }
+  .phone .p-head{font-weight:700; font-size:15px; color:var(--ink); margin-bottom:2px;}
+  .phone .p-sub{font-size:12px; color:#7c8577; margin-bottom:14px;}
+  .slot-row{display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap;}
+  .slot{
+    font-size:12px; padding:7px 10px; border-radius:20px; border:1px solid var(--line);
+    background:var(--cream); font-family:'Avenir Next',sans-serif; font-weight:600; color:var(--sage-dark);
+    cursor:pointer;
+  }
+  .slot.active{background:var(--sage-dark); color:var(--white); border-color:var(--sage-dark);}
+  .care-card{
+    background:var(--cream); border-radius:10px; padding:12px 14px; margin-bottom:10px;
+    display:flex; justify-content:space-between; align-items:center;
+  }
+  .care-card .name{font-family:'Avenir Next',sans-serif; font-weight:700; font-size:13px;}
+  .care-card .meta{font-size:11px; color:#8a9080; font-family:'Avenir Next',sans-serif;}
+  .care-card .price{font-family:'Avenir Next',sans-serif; font-weight:700; font-size:13px; color:var(--clay);}
+  .phone .cta{
+    margin-top:auto; background:var(--clay); color:var(--white); text-align:center; padding:13px;
+    border-radius:8px; font-family:'Avenir Next',sans-serif; font-weight:700; font-size:13.5px;
+  }
+
+  /* MARQUEE STRIP */
+  .strip{
+    border-top:1px solid var(--line); border-bottom:1px solid var(--line);
+    padding:16px 0; overflow:hidden; background:var(--white);
+  }
+  .strip-inner{display:flex; gap:60px; white-space:nowrap; font-family:'Avenir Next',sans-serif;
+    font-weight:700; font-size:13px; letter-spacing:0.05em; color:var(--sage-dark); animation:scroll 26s linear infinite;}
+  @keyframes scroll{from{transform:translateX(0);} to{transform:translateX(-50%);}}
+  @media (prefers-reduced-motion: reduce){.strip-inner{animation:none;}}
+
+  section{max-width:1180px; margin:0 auto; padding:90px 32px;}
+  .section-head{max-width:640px; margin-bottom:50px;}
+  .section-head .tag{color:var(--clay); font-weight:700; font-size:13px; letter-spacing:0.04em;}
+  .section-head h2{font-size:36px; margin:12px 0 0; font-weight:800;}
+
+  /* FEATURES */
+  .feature-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--line); border:1px solid var(--line);}
+  .feature{background:var(--cream); padding:34px 30px; transition:background .2s ease;}
+  .feature:hover{background:var(--white);}
+  .feature .num{font-family:'Avenir Next',sans-serif; font-weight:800; font-size:13px; color:var(--gold);}
+  .feature h3{font-size:20px; margin:14px 0 10px; font-weight:700;}
+  .feature p{font-size:14.5px; color:#4a5142; margin:0;}
+
+  /* SERVICES */
+  .service-list{border-top:1px solid var(--line);}
+  .service-cat{font-family:'Avenir Next',sans-serif; font-weight:700; font-size:13px; letter-spacing:0.04em; color:var(--clay); margin:36px 0 4px;}
+  .service-cat:first-child{margin-top:24px;}
+  .service-row{
+    display:grid; grid-template-columns:1fr auto auto; gap:24px; align-items:baseline;
+    padding:22px 4px; border-bottom:1px solid var(--line); transition:background .2s ease;
+  }
+  .service-row:hover{background:var(--white);}
+  .service-row h4{margin:0; font-size:19px; font-weight:700;}
+  .service-row .desc{font-family:'Avenir Next',sans-serif; font-size:13px; color:#7c8577; margin-top:4px;}
+  .service-row .dur{font-family:'Avenir Next',sans-serif; font-size:13px; color:var(--sage-dark); font-weight:600;}
+  .service-row .amt{font-family:'Avenir Next',sans-serif; font-weight:800; font-size:17px; color:var(--clay); text-align:right;}
+
+  /* BOOKING DEMO */
+  .booking-panel{
+    background:var(--sage-dark); border-radius:8px; padding:50px; color:var(--white);
+    display:grid; grid-template-columns:1fr 1fr; gap:50px;
+  }
+  .booking-panel h2{font-size:30px; margin:0 0 8px; font-weight:800;}
+  .booking-panel p.lede{font-family:'Avenir Next',sans-serif; font-size:14.5px; color:#d7ddcf; max-width:40ch;}
+  .field-label{font-family:'Avenir Next',sans-serif; font-weight:700; font-size:12px; letter-spacing:0.04em; color:#cfd8c4; margin:22px 0 10px;}
+  .chip-row{display:flex; gap:10px; flex-wrap:wrap;}
+  .chip{
+    font-family:'Avenir Next',sans-serif; font-size:13px; font-weight:600; padding:9px 16px;
+    border-radius:20px; border:1px solid rgba(255,255,255,0.3); cursor:pointer; background:transparent; color:var(--white);
+  }
+  .chip.sel{background:var(--gold); border-color:var(--gold); color:var(--ink);}
+  .booking-card{background:var(--white); border-radius:8px; padding:26px; color:var(--ink); box-shadow:0 20px 40px rgba(0,0,0,0.18);}
+  .booking-card .sum-row{display:flex; justify-content:space-between; font-family:'Avenir Next',sans-serif; font-size:14px; padding:9px 0; border-bottom:1px solid var(--line);}
+  .booking-card .sum-row.total{font-weight:800; font-size:16px; border-bottom:none; padding-top:16px;}
+  #confirmBtn{width:100%; margin-top:18px; padding:15px; font-size:14.5px;}
+  #bookMsg{font-family:'Avenir Next',sans-serif; font-size:13px; color:var(--sage-dark); font-weight:700; margin-top:12px; min-height:16px;}
+
+  /* STYLISTS */
+  .people-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:26px;}
+  .person{}
+  .person .avatar{
+    width:100%; aspect-ratio:1; border-radius:6px; background:linear-gradient(150deg,var(--sage),var(--sage-dark));
+    display:flex; align-items:center; justify-content:center; font-size:34px; color:var(--white); font-weight:800; font-family:'Avenir Next',sans-serif;
+  }
+  .person h4{font-size:16px; margin:14px 0 2px;}
+  .person .role{font-family:'Avenir Next',sans-serif; font-size:12.5px; color:#8a9080;}
+
+  /* ABOUT */
+  .about{display:grid; grid-template-columns:0.9fr 1.1fr; gap:60px; align-items:center;}
+  .about-visual{
+    background:linear-gradient(160deg,var(--gold),var(--clay)); border-radius:6px; aspect-ratio:4/5;
+    display:flex; align-items:flex-end; padding:26px;
+  }
+  .about-visual .stat{color:var(--white); font-family:'Avenir Next',sans-serif;}
+  .about-visual .stat .big{font-size:44px; font-weight:800; display:block; line-height:1;}
+  .about-visual .stat .small{font-size:13px; opacity:0.9;}
+  .about p{font-size:16.5px; color:#3c4238; max-width:52ch;}
+  .about-facts{display:flex; gap:40px; margin-top:26px;}
+  .about-facts div strong{display:block; font-family:'Avenir Next',sans-serif; font-size:26px; color:var(--sage-dark);}
+  .about-facts div span{font-family:'Avenir Next',sans-serif; font-size:12.5px; color:#8a9080;}
+
+  /* TESTIMONIALS */
+  .testi-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:26px;}
+  .testi{background:var(--white); border:1px solid var(--line); border-radius:6px; padding:28px;}
+  .testi .stars{color:var(--gold); font-size:14px; letter-spacing:2px; margin-bottom:14px;}
+  .testi p{font-size:15px; color:#3c4238; margin:0 0 18px;}
+  .testi .who{font-family:'Avenir Next',sans-serif; font-weight:700; font-size:13.5px;}
+  .testi .who span{display:block; font-weight:500; color:#8a9080; font-size:12px;}
+
+  /* APP FOOTER CTA */
+  .cta-band{
+    background:var(--ink); color:var(--white); text-align:left; padding:90px 32px; margin-top:0;
+  }
+  .cta-inner{max-width:1180px; margin:0 auto; display:flex; justify-content:space-between; align-items:center; gap:40px; flex-wrap:wrap;}
+  .cta-inner h2{font-size:34px; margin:0 0 10px; max-width:16ch; font-weight:800;}
+  .cta-inner p{font-family:'Avenir Next',sans-serif; color:#c7ccbf; font-size:14.5px; max-width:40ch; margin:0;}
+  .cta-btns{display:flex; gap:14px;}
+  .cta-btns .btn{border-color:rgba(255,255,255,0.4); color:var(--white);}
+  .cta-btns .btn.filled{background:var(--gold); border-color:var(--gold); color:var(--ink);}
+
+  footer{padding:44px 32px 30px; font-family:'Avenir Next',sans-serif; font-size:13px; color:#8a9080; background:var(--ink);}
+  .footer-grid{max-width:1180px; margin:0 auto; display:grid; grid-template-columns:1.4fr 1fr 1fr 1fr; gap:40px; padding-bottom:34px; border-bottom:1px solid rgba(255,255,255,0.12);}
+  .footer-grid .brand{color:var(--white); margin-bottom:10px;}
+  .footer-grid p{max-width:32ch; color:#8a9080; line-height:1.6;}
+  .footer-grid h5{color:#c7ccbf; font-size:12px; letter-spacing:0.04em; margin:0 0 14px;}
+  .footer-grid ul{list-style:none; margin:0; padding:0;}
+  .footer-grid li{margin-bottom:10px;}
+  .footer-grid a{text-decoration:none; color:#8a9080;}
+  .footer-grid a:hover{color:var(--white);}
+  .footer-bottom{max-width:1180px; margin:0 auto; padding-top:20px; display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px;}
+
+  @media (max-width:880px){
+    .hero{grid-template-columns:1fr; padding-top:50px;}
+    .hero h1{font-size:38px;}
+    .feature-grid{grid-template-columns:1fr;}
+    .booking-panel{grid-template-columns:1fr; padding:30px;}
+    .people-grid{grid-template-columns:repeat(2,1fr);}
+    .cta-inner{flex-direction:column; align-items:flex-start;}
+    .about{grid-template-columns:1fr;}
+    .testi-grid{grid-template-columns:1fr;}
+    .footer-grid{grid-template-columns:1fr 1fr; gap:28px;}
+    nav ul{display:none;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="nav-wrap">
+    <div class="brand">
+      <svg class="leaf" viewBox="0 0 24 24" fill="none"><path d="M4 20C4 10 10 4 20 4C20 14 14 20 4 20Z" fill="#7c8f6e"/><path d="M4 20C9 15 13 11 20 4" stroke="#4d5c42" stroke-width="1.2"/></svg>
+      Verdant
+    </div>
+    <nav><ul>
+      <li><a href="#services">Services</a></li>
+      <li><a href="#book">Book</a></li>
+      <li><a href="#stylists">Stylists</a></li>
+      <li><a href="#about">About</a></li>
+    </ul></nav>
+    <button class="btn filled" onclick="document.getElementById('book').scrollIntoView({behavior:'smooth'})">Get the app</button>
+  </div>
+</header>
+
+<div class="hero">
+  <div>
+    <div class="tag">CLIENT SELF-SERVICE APP</div>
+    <h1>Book your <em>calm</em>,<br>on your own time.</h1>
+    <p>Verdant puts the whole salon and spa front desk in your pocket — real-time slots, your stylist's calendar, and payment, without a single phone call.</p>
+    <div class="hero-actions">
+      <button class="btn filled" onclick="document.getElementById('book').scrollIntoView()">Book an appointment</button>
+      <button class="btn" onclick="document.getElementById('services').scrollIntoView({behavior:'smooth'})">See services</button>
+    </div>
+  </div>
+  <div class="hero-visual">
+    <div class="phone">
+      <div class="p-head">Thu, 18 Sep</div>
+      <div class="p-sub">Available slots — Aanya, Senior Stylist</div>
+      <div class="slot-row">
+        <div class="slot">10:30</div>
+        <div class="slot active">11:15</div>
+        <div class="slot">1:00</div>
+        <div class="slot">3:45</div>
+      </div>
+      <div class="care-card">
+        <div><div class="name">Balayage & Gloss</div><div class="meta">90 min</div></div>
+        <div class="price">₹3,200</div>
+      </div>
+      <div class="care-card">
+        <div><div class="name">Deep Tissue Massage</div><div class="meta">60 min</div></div>
+        <div class="price">₹2,100</div>
+      </div>
+      <div class="cta">Confirm booking →</div>
+    </div>
+  </div>
+</div>
+
+<div class="strip"><div class="strip-inner">
+  REAL-TIME AVAILABILITY &nbsp;•&nbsp; IN-APP PAYMENTS &nbsp;•&nbsp; STYLIST PROFILES &nbsp;•&nbsp; PUSH REMINDERS &nbsp;•&nbsp; LOYALTY REWARDS &nbsp;•&nbsp;
+  REAL-TIME AVAILABILITY &nbsp;•&nbsp; IN-APP PAYMENTS &nbsp;•&nbsp; STYLIST PROFILES &nbsp;•&nbsp; PUSH REMINDERS &nbsp;•&nbsp; LOYALTY REWARDS &nbsp;•&nbsp;
+</div></div>
+
+<section id="features">
+  <div class="section-head">
+    <div class="tag">WHY WE BUILT THIS</div>
+    <h2>The front desk was the bottleneck.</h2>
+  </div>
+  <div class="feature-grid">
+    <div class="feature">
+      <div class="num">01</div>
+      <h3>No more hold music</h3>
+      <p>Clients booked over the phone during business hours only — Verdant opens the calendar 24/7 from Firebase-backed availability.</p>
+    </div>
+    <div class="feature">
+      <div class="num">02</div>
+      <h3>Fewer no-shows</h3>
+      <p>Firebase Cloud Messaging sends automatic reminders and lets clients reschedule themselves before a slot goes to waste.</p>
+    </div>
+    <div class="feature">
+      <div class="num">03</div>
+      <h3>Pay without the counter</h3>
+      <p>Razorpay/Stripe checkout inside the app closes the loop — book, pay, and get a receipt in one flow.</p>
+    </div>
+  </div>
+</section>
+
+<section id="services">
+  <div class="section-head">
+    <div class="tag">MENU</div>
+    <h2>Signature services</h2>
+  </div>
+  <div class="service-list">
+    <div class="service-cat">HAIR</div>
+    <div class="service-row">
+      <div><h4>Balayage & Gloss</h4><div class="desc">Hand-painted color with a glossing treatment for shine.</div></div>
+      <div class="dur">90 min</div>
+      <div class="amt">₹3,200</div>
+    </div>
+    <div class="service-row">
+      <div><h4>Root Touch-Up</h4><div class="desc">Single-process color refresh for regrowth at the root.</div></div>
+      <div class="dur">45 min</div>
+      <div class="amt">₹1,500</div>
+    </div>
+    <div class="service-row">
+      <div><h4>Precision Haircut</h4><div class="desc">Consultation, wash, cut, and blow-dry finish.</div></div>
+      <div class="dur">40 min</div>
+      <div class="amt">₹900</div>
+    </div>
+    <div class="service-row">
+      <div><h4>Keratin Smoothening</h4><div class="desc">Frizz-control treatment for smoother, manageable hair.</div></div>
+      <div class="dur">120 min</div>
+      <div class="amt">₹4,500</div>
+    </div>
+
+    <div class="service-cat">SKIN</div>
+    <div class="service-row">
+      <div><h4>Signature Facial</h4><div class="desc">Deep cleanse, extraction, and hydration for all skin types.</div></div>
+      <div class="dur">50 min</div>
+      <div class="amt">₹1,800</div>
+    </div>
+    <div class="service-row">
+      <div><h4>Gold Radiance Facial</h4><div class="desc">Brightening treatment with 24k gold-infused serum.</div></div>
+      <div class="dur">60 min</div>
+      <div class="amt">₹2,600</div>
+    </div>
+    <div class="service-row">
+      <div><h4>Full Body Waxing</h4><div class="desc">Smooth, salon-grade wax for arms, legs, and back.</div></div>
+      <div class="dur">90 min</div>
+      <div class="amt">₹2,200</div>
+    </div>
+
+    <div class="service-cat">MASSAGE & BODY</div>
+    <div class="service-row">
+      <div><h4>Deep Tissue Massage</h4><div class="desc">Firm-pressure therapy targeting chronic muscle tension.</div></div>
+      <div class="dur">60 min</div>
+      <div class="amt">₹2,100</div>
+    </div>
+    <div class="service-row">
+      <div><h4>Aromatherapy Massage</h4><div class="desc">Full-body relaxation massage with essential oil blends.</div></div>
+      <div class="dur">75 min</div>
+      <div class="amt">₹2,400</div>
+    </div>
+    <div class="service-row">
+      <div><h4>Hot Stone Therapy</h4><div class="desc">Heated basalt stones to ease deep muscle tension.</div></div>
+      <div class="dur">80 min</div>
+      <div class="amt">₹2,900</div>
+    </div>
+
+    <div class="service-cat">NAILS</div>
+    <div class="service-row">
+      <div><h4>Classic Manicure & Pedicure</h4><div class="desc">Shape, cuticle care, and polish for hands and feet.</div></div>
+      <div class="dur">75 min</div>
+      <div class="amt">₹1,400</div>
+    </div>
+    <div class="service-row">
+      <div><h4>Gel Polish Add-On</h4><div class="desc">Long-wear gel finish, added to any mani-pedi.</div></div>
+      <div class="dur">20 min</div>
+      <div class="amt">₹500</div>
+    </div>
+
+    <div class="service-cat">OCCASIONS</div>
+    <div class="service-row">
+      <div><h4>Bridal Makeup</h4><div class="desc">HD makeup application with pre-bridal trial included.</div></div>
+      <div class="dur">150 min</div>
+      <div class="amt">₹8,500</div>
+    </div>
+  </div>
+</section>
+
+<section id="book">
+  <div class="section-head">
+    <div class="tag">TRY IT — LIVE</div>
+    <h2>Book a slot right here</h2>
+  </div>
+  <div class="booking-panel">
+    <div>
+      <h2>New appointment</h2>
+      <p class="lede" id="apiStatus">This calls the real Verdant API — pick a service, stylist, date, and time, and it books against the live server.</p>
+
+      <div class="field-label">YOUR NAME</div>
+      <input type="text" id="clientName" placeholder="e.g. Priya Sharma" style="width:100%; padding:10px 12px; border-radius:4px; border:1px solid rgba(255,255,255,0.3); background:transparent; color:var(--white); font-family:'Avenir Next',sans-serif; font-size:14px;">
+
+      <div class="field-label">SERVICE</div>
+      <div class="chip-row" id="serviceChips"><span style="font-family:'Avenir Next',sans-serif; font-size:13px; color:#cfd8c4;">Loading services…</span></div>
+
+      <div class="field-label">STYLIST</div>
+      <div class="chip-row" id="stylistChips"><span style="font-family:'Avenir Next',sans-serif; font-size:13px; color:#cfd8c4;">Loading stylists…</span></div>
+
+      <div class="field-label">DATE</div>
+      <input type="date" id="bookDate" style="padding:9px 12px; border-radius:20px; border:1px solid rgba(255,255,255,0.3); background:transparent; color:var(--white); font-family:'Avenir Next',sans-serif; font-size:13px;">
+
+      <div class="field-label">TIME</div>
+      <div class="chip-row" id="timeChips"><span style="font-family:'Avenir Next',sans-serif; font-size:13px; color:#cfd8c4;">Pick a stylist and date first</span></div>
+    </div>
+
+    <div class="booking-card">
+      <h3 style="margin-top:0;">Summary</h3>
+      <div class="sum-row"><span>Client</span><span id="sumClient">—</span></div>
+      <div class="sum-row"><span>Service</span><span id="sumService">—</span></div>
+      <div class="sum-row"><span>Stylist</span><span id="sumStylist">—</span></div>
+      <div class="sum-row"><span>Date & time</span><span id="sumTime">—</span></div>
+      <div class="sum-row"><span>Duration</span><span id="sumDur">—</span></div>
+      <div class="sum-row total"><span>Total</span><span id="sumTotal">₹0</span></div>
+      <button class="btn filled" id="confirmBtn" onclick="confirmBooking()">Confirm & pay</button>
+      <div id="bookMsg"></div>
+    </div>
+  </div>
+</section>
+
+<section id="stylists">
+  <div class="section-head">
+    <div class="tag">THE TEAM</div>
+    <h2>Meet your stylists</h2>
+  </div>
+  <div class="people-grid">
+    <div class="person"><div class="avatar">A</div><h4>Aanya</h4><div class="role">Senior Colorist</div></div>
+    <div class="person"><div class="avatar">R</div><h4>Rehan</h4><div class="role">Massage Therapist</div></div>
+    <div class="person"><div class="avatar">M</div><h4>Meher</h4><div class="role">Skin Specialist</div></div>
+    <div class="person"><div class="avatar">S</div><h4>Sana</h4><div class="role">Nail Artist</div></div>
+  </div>
+</section>
+
+<section id="about">
+  <div class="about">
+    <div class="about-visual">
+      <div class="stat"><span class="big">4.8</span><span class="small">average client rating across 1,200+ bookings</span></div>
+    </div>
+    <div>
+      <div class="tag">ABOUT VERDANT</div>
+      <h2 style="font-size:32px; font-weight:800; margin:12px 0 16px;">Started as a front-desk problem, not an app idea.</h2>
+      <p>Our founding salon was turning away calls during peak hours because there was no one free to pick up the phone. Verdant began as a way to let clients see the real calendar and book straight into it — no waiting, no back-and-forth.</p>
+      <p>Today the same system runs booking, stylist schedules, and payments for the whole salon and spa floor.</p>
+      <div class="about-facts">
+        <div><strong>3</strong><span>Locations live</span></div>
+        <div><strong>12</strong><span>Stylists & therapists</span></div>
+        <div><strong>24/7</strong><span>Booking availability</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="testimonials">
+  <div class="section-head">
+    <div class="tag">CLIENTS</div>
+    <h2>What clients are saying</h2>
+  </div>
+  <div class="testi-grid">
+    <div class="testi">
+      <div class="stars">★★★★★</div>
+      <p>I used to call three times to find a slot with Aanya. Now I just check the app on my commute and it's done.</p>
+      <div class="who">Priya M.<span>Regular, Balayage & Gloss</span></div>
+    </div>
+    <div class="testi">
+      <div class="stars">★★★★★</div>
+      <p>The reminders actually stopped me from missing my facial twice this month. Small thing, big difference.</p>
+      <div class="who">Fatima R.<span>Member since 2024</span></div>
+    </div>
+    <div class="testi">
+      <div class="stars">★★★★☆</div>
+      <p>Paying in the app before I even walk in means I'm not standing at the counter after my massage. Love that.</p>
+      <div class="who">Karthik S.<span>Deep Tissue Massage client</span></div>
+    </div>
+  </div>
+</section>
+
+<div class="cta-band">
+  <div class="cta-inner">
+    <div>
+      <h2>Client self-service, end to end.</h2>
+      <p>Built on Flutter and Firebase, with Spring Boot and MySQL behind the scenes — booking, payments, and reminders in one app.</p>
+    </div>
+    <div class="cta-btns">
+      <button class="btn" onclick="window.open('https://github.com','_blank')">View on GitHub</button>
+      <button class="btn filled" onclick="document.getElementById('book').scrollIntoView({behavior:'smooth'})">Download APK</button>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-grid">
+    <div>
+      <div class="brand" style="display:flex;align-items:center;gap:10px;font-weight:700;font-size:18px;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4 20C4 10 10 4 20 4C20 14 14 20 4 20Z" fill="#7c8f6e"/><path d="M4 20C9 15 13 11 20 4" stroke="#c7ccbf" stroke-width="1.2"/></svg>
+        Verdant
+      </div>
+      <p>Client self-service booking, payments, and reminders for salons and spas — built for Section 5, Team 3.</p>
+    </div>
+    <div>
+      <h5>EXPLORE</h5>
+      <ul>
+        <li><a href="#services">Services</a></li>
+        <li><a href="#book">Book an appointment</a></li>
+        <li><a href="#stylists">Stylists</a></li>
+        <li><a href="#about">About</a></li>
+      </ul>
+    </div>
+    <div>
+      <h5>SUPPORT</h5>
+      <ul>
+        <li><a href="#">Help center</a></li>
+        <li><a href="#">Cancellations</a></li>
+        <li><a href="#">Contact us</a></li>
+      </ul>
+    </div>
+    <div>
+      <h5>VISIT</h5>
+      <ul>
+        <li>Bachupally, Hyderabad</li>
+        <li>Open 9am – 8pm</li>
+        <li>hello@verdant.app</li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 Verdant. Built with Flutter, Firebase & Spring Boot.</span>
+    <span>Salon & Spa Client Self-Service · Section 5, Team 3</span>
+  </div>
+</footer>
+
+<script>
+  const API_BASE = "http://localhost:4000/api";
+  let services = [];
+  let stylists = [];
+  let state = { serviceId: null, stylistId: null, date: null, time: null };
+
+  function fmtINR(n){ return '₹' + Number(n).toLocaleString('en-IN'); }
+
+  async function loadInitialData(){
+    const statusEl = document.getElementById('apiStatus');
+    try {
+      const [svcRes, styRes] = await Promise.all([
+        fetch(API_BASE + '/services'),
+        fetch(API_BASE + '/stylists')
+      ]);
+      services = await svcRes.json();
+      stylists = await styRes.json();
+
+      renderServiceChips();
+      renderStylistChips();
+
+      // default date = tomorrow
+      const d = new Date(); d.setDate(d.getDate() + 1);
+      document.getElementById('bookDate').value = d.toISOString().slice(0,10);
+      document.getElementById('bookDate').min = new Date().toISOString().slice(0,10);
+      state.date = document.getElementById('bookDate').value;
+
+      state.serviceId = services[0].id;
+      state.stylistId = stylists[0].id;
+      updateSummary();
+      loadSlots();
+
+      statusEl.textContent = "Connected to the live Verdant API — pick a service, stylist, date, and time below.";
+    } catch(err){
+      statusEl.textContent = "Backend isn't reachable right now (start it with npm start in /backend) — showing the interface without live data.";
+      document.getElementById('serviceChips').innerHTML = '<span style="font-family:\'Avenir Next\',sans-serif;font-size:13px;color:#e3b9a0;">Could not load services</span>';
+      document.getElementById('stylistChips').innerHTML = '';
+      document.getElementById('timeChips').innerHTML = '';
+    }
+  }
+
+  function renderServiceChips(){
+    const el = document.getElementById('serviceChips');
+    el.innerHTML = '';
+    services.forEach(s=>{
+      const b = document.createElement('button');
+      b.className = 'chip' + (s.id===state.serviceId ? ' sel':'');
+      b.textContent = s.name + ' · ' + fmtINR(s.price);
+      b.onclick = ()=>{ state.serviceId = s.id; renderServiceChips(); updateSummary(); };
+      el.appendChild(b);
+    });
+  }
+
+  function renderStylistChips(){
+    const el = document.getElementById('stylistChips');
+    el.innerHTML = '';
+    stylists.forEach(s=>{
+      const b = document.createElement('button');
+      b.className = 'chip' + (s.id===state.stylistId ? ' sel':'');
+      b.textContent = s.name;
+      b.onclick = ()=>{ state.stylistId = s.id; state.time = null; renderStylistChips(); updateSummary(); loadSlots(); };
+      el.appendChild(b);
+    });
+  }
+
+  async function loadSlots(){
+    const el = document.getElementById('timeChips');
+    if(!state.stylistId || !state.date){ return; }
+    el.innerHTML = '<span style="font-family:\'Avenir Next\',sans-serif;font-size:13px;color:#cfd8c4;">Loading times…</span>';
+    try{
+      const res = await fetch(`${API_BASE}/slots?stylistId=${state.stylistId}&date=${state.date}`);
+      const data = await res.json();
+      el.innerHTML = '';
+      data.slots.forEach(slot=>{
+        const b = document.createElement('button');
+        b.className = 'chip' + (slot.time===state.time ? ' sel':'');
+        b.textContent = slot.time;
+        if(!slot.available){
+          b.disabled = true;
+          b.style.opacity = 0.35;
+          b.style.textDecoration = 'line-through';
+        } else {
+          b.onclick = ()=>{ state.time = slot.time; loadSlots(); updateSummary(); };
+        }
+        el.appendChild(b);
+      });
+      if(!state.time){
+        const firstFree = data.slots.find(s=>s.available);
+        if(firstFree){ state.time = firstFree.time; loadSlots(); updateSummary(); }
+      }
+    } catch(err){
+      el.innerHTML = '<span style="font-family:\'Avenir Next\',sans-serif;font-size:13px;color:#e3b9a0;">Could not load times</span>';
+    }
+  }
+
+  document.getElementById('bookDate').addEventListener('change', (e)=>{
+    state.date = e.target.value;
+    state.time = null;
+    loadSlots();
+    updateSummary();
+  });
+
+  function updateSummary(){
+    const svc = services.find(s=>s.id===state.serviceId);
+    const sty = stylists.find(s=>s.id===state.stylistId);
+    document.getElementById('sumClient').textContent = document.getElementById('clientName').value || '—';
+    document.getElementById('sumService').textContent = svc ? svc.name : '—';
+    document.getElementById('sumStylist').textContent = sty ? sty.name : '—';
+    document.getElementById('sumTime').textContent = (state.date && state.time) ? `${state.date} · ${state.time}` : '—';
+    document.getElementById('sumDur').textContent = svc ? svc.duration + ' min' : '—';
+    document.getElementById('sumTotal').textContent = svc ? fmtINR(svc.price) : '₹0';
+  }
+  document.getElementById('clientName').addEventListener('input', updateSummary);
+
+  async function confirmBooking(){
+    const msg = document.getElementById('bookMsg');
+    const name = document.getElementById('clientName').value.trim();
+    if(!name){ msg.style.color = '#a9613f'; msg.textContent = 'Please enter your name first.'; return; }
+    if(!state.serviceId || !state.stylistId || !state.date || !state.time){
+      msg.style.color = '#a9613f'; msg.textContent = 'Please pick a service, stylist, date, and time.'; return;
+    }
+    msg.style.color = 'var(--sage-dark)';
+    msg.textContent = 'Booking…';
+    try{
+      const res = await fetch(API_BASE + '/bookings', {
+        method: 'POST',
+        headers: { 'Content-Type':'application/json' },
+        body: JSON.stringify({
+          serviceId: state.serviceId,
+          stylistId: state.stylistId,
+          date: state.date,
+          time: state.time,
+          clientName: name
+        })
+      });
+      const data = await res.json();
+      if(!res.ok){
+        msg.style.color = '#a9613f';
+        msg.textContent = data.error || 'Something went wrong.';
+        loadSlots();
+        return;
+      }
+      msg.textContent = `✓ Booked — confirmation #${data.id} saved on the server.`;
+      state.time = null;
+      loadSlots();
+    } catch(err){
+      msg.style.color = '#a9613f';
+      msg.textContent = 'Could not reach the backend. Is it running on localhost:4000?';
+    }
+  }
+
+  loadInitialData();
+</script>
+
+</body>
+</html>
